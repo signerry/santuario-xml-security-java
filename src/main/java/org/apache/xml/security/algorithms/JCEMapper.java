@@ -18,6 +18,7 @@
  */
 package org.apache.xml.security.algorithms;
 
+import java.security.Provider;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +38,7 @@ public class JCEMapper {
 
     private static Map<String, Algorithm> algorithmsMap = new ConcurrentHashMap<>();
 
-    private static String providerName;
+    private static Provider provider;
 
     /**
      * Method register
@@ -425,8 +426,8 @@ public class JCEMapper {
      * Gets the default Provider for obtaining the security algorithms
      * @return the default providerId.
      */
-    public static String getProviderId() {
-        return providerName;
+    public static Provider getProviderId() {
+        return provider;
     }
 
     /**
@@ -435,9 +436,9 @@ public class JCEMapper {
      * @throws SecurityException if a security manager is installed and the
      *    caller does not have permission to register the JCE algorithm
      */
-    public static void setProviderId(String provider) {
+    public static void setProviderId(Provider provider) {
         JavaUtils.checkRegisterPermission();
-        providerName = provider;
+        JCEMapper.provider = provider;
     }
 
     /**
