@@ -4,8 +4,14 @@
 name: Maven Package
 
 on:
-  release:
-    types: [created]
+  # Set your workflow to run on push events to the develop and all feature branches
+  push:
+    branches:
+      - 2.3.2
+  # Set your workflow to run on pull request events that target the main branch
+  pull_request:
+    branches: 
+      - 2.3.2
 
 jobs:
   build:
