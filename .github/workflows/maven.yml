@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: self-hosted
+    runs-on: linux-runner
 
     steps:
     - uses: actions/checkout@v3
