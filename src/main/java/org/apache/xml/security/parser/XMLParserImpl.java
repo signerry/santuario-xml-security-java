@@ -41,6 +41,8 @@ import org.xml.sax.SAXException;
  */
 public class XMLParserImpl implements XMLParser {
 
+    private static DocumentBuilderFactory customDocumentBuilderFactory;
+
     private static int parserPoolSize =
             AccessController.doPrivileged(
                     (PrivilegedAction<Integer>) () -> Integer.getInteger("org.apache.xml.security.parser.pool-size", 20));
@@ -50,6 +52,10 @@ public class XMLParserImpl implements XMLParser {
 
     private static final Map<ClassLoader, Queue<DocumentBuilder>> DOCUMENT_BUILDERS_DISALLOW_DOCTYPE =
             Collections.synchronizedMap(new WeakHashMap<ClassLoader, Queue<DocumentBuilder>>());
+
+    public static void setCustomDocumentBuilderFactory(DocumentBuilderFactory customDocumentBuilderFactory) {
+        XMLParserImpl.customDocumentBuilderFactory = customDocumentBuilderFactory;
+    }
 
     @Override
     public Document parse(InputStream inputStream, boolean disallowDocTypeDeclarations) throws XMLParserException {
@@ -95,7 +101,15 @@ public class XMLParserImpl implements XMLParser {
     }
 
     private static DocumentBuilder createDocumentBuilder(boolean disallowDocTypeDeclarations) throws ParserConfigurationException {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory f;
+
+        if(customDocumentBuilderFactory == null) {
+            f = DocumentBuilderFactory.newInstance();
+        }
+        else {
+            f = customDocumentBuilderFactory;
+        }
+
         f.setNamespaceAware(true);
         f.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         f.setFeature("http://apache.org/xml/features/disallow-doctype-decl", disallowDocTypeDeclarations);
